@@ -1,0 +1,61 @@
+.custom-navbar {
+  background-color: #0d3b66 !important;
+}
+
+.custom-brand {
+  color: #fff !important;
+}
+
+.custom-signup-btn {
+  background-color: #0d3b66 !important;
+  border-color: #0d3b66 !important;
+  border-radius: 30px;
+  padding-left: 28px;
+  padding-right: 28px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(13, 59, 102, 0.08);
+}
+
+.custom-signup-btn:hover {
+  background-color: #145da0 !important;
+  border-color: #145da0 !important;
+}
+
+.text-black {
+  color: #201818 !important;
+}
+
+.hero-highlight {
+  border-left: 5px solid #0d3b66;
+  padding-left: 28px;
+  background: rgba(13, 59, 102, 0.03);
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(13, 59, 102, 0.06);
+}
+
+.custom-subtext {
+  color: #1a2636;
+  font-weight: 700;
+  font-size: 1.25rem;
+  margin-top: 12px;
+  margin-bottom: 28px;
+}
+
+.hero-section-bg {
+  background: linear-gradient(90deg, #f7fafc 60%, #e3ecf7 100%);
+  border-radius: 24px;
+  padding: 40px 0;
+  margin-bottom: 32px;
+}
+
+.hero-image-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 6px 32px rgba(13, 59, 102, 0.1);
+  padding: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}

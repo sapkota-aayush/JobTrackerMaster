@@ -1,0 +1,138 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>JobSearchMaster</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Bootstrap 5 CDN -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" href="{% static 'myapp/css/home.css' %}" />
+  </head>
+  <body class="bg-white">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark custom-navbar shadow-sm">
+      <div class="container">
+        <a class="navbar-brand fw-bold custom-brand" href="#"
+          >JobSearchMaster</a
+        >
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="featuresDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+              >
+                All Features
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a class="dropdown-item" href="#">Track Applications</a>
+                </li>
+                <li><a class="dropdown-item" href="#">Job Wishlist</a></li>
+                <li><a class="dropdown-item" href="#">Status Updates</a></li>
+              </ul>
+            </li>
+          </ul>
+          <div class="d-flex gap-2">
+            <a href="#" class="btn btn-outline-light">Login</a>
+            <a href="#" class="btn btn-primary custom-signup-btn"
+              >Sign Up For Free</a
+            >
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="container hero-section-bg">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <div class="hero-highlight">
+            <h1 class="display-5 fw-bold text-black mb-3">
+              Simplify Your Job Search
+            </h1>
+            <p class="lead custom-subtext">
+              <strong
+                >Track job applications and manage your job search
+                effectively.</strong
+              >
+            </p>
+            <a href="#" class="btn btn-lg btn-primary custom-signup-btn"
+              >Get Started</a
+            >
+          </div>
+        </div>
+        <div class="col-md-6 text-center">
+          <div class="hero-image-card">
+            <img
+              src="{% static 'myapp/images/JobSearchHome.png' %}"
+              alt="Young professional using laptop"
+              class="img-fluid"
+              style="max-height: 220px"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section - Just Above Footer -->
+    <section class="container my-5">
+      <div class="row text-center">
+        <div class="col-md-4 mb-4">
+          <div class="p-4 border rounded shadow-sm h-100">
+            <span class="fs-2 text-primary mb-2"
+              ><i class="bi bi-clipboard-check"></i
+            ></span>
+            <h5 class="fw-bold mb-2">Organize Applications</h5>
+            <p class="text-muted mb-0">
+              Easily keep track of all your job applications in one place.
+            </p>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="p-4 border rounded shadow-sm h-100">
+            <span class="fs-2 text-primary mb-2"
+              ><i class="bi bi-lightbulb"></i
+            ></span>
+            <h5 class="fw-bold mb-2">Stay Motivated</h5>
+            <p class="text-muted mb-0">
+              Visualize your progress and never miss an opportunity.
+            </p>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="p-4 border rounded shadow-sm h-100">
+            <span class="fs-2 text-primary mb-2"
+              ><i class="bi bi-graph-up"></i
+            ></span>
+            <h5 class="fw-bold mb-2">Achieve Success</h5>
+            <p class="text-muted mb-0">
+              Manage your job search efficiently and land your dream job.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
