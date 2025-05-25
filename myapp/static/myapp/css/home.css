@@ -59,3 +59,9 @@
   justify-content: center;
   min-height: 300px;
 }
+
+.custom-logo {
+  width: 100%;
+  display: block;
+  border-radius: 12px 12px 0 0;
+}
