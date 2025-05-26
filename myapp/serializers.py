@@ -9,11 +9,13 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email']
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+    id = serializers.IntegerField(source='user.id')
+    username = serializers.CharField(source='user.username')
+    email = serializers.EmailField(source='user.email')
 
     class Meta:
         model = UserProfile
-        fields = ['id', 'user']
+        fields = ['id', 'username', 'email']
 
 class JobSerializer(serializers.ModelSerializer):
     user = UserProfileSerializer()
