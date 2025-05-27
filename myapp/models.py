@@ -8,6 +8,13 @@ class UserProfile(models.Model):
         return self.user.username
 
 
+class WorkType(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
 LIST_CHOICES = (
     ("WISH_LIST", "Wish List"),
     ("APPLIED", "Applied"),
@@ -21,27 +28,20 @@ LIST_CHOICES = (
 
 
 class JobModel(models.Model):
-    company = models.CharField(max_length=100, verbose_name="Company Name")
-    location = models.CharField(max_length=100, verbose_name="Location")
-    title = models.CharField(max_length=100, verbose_name="Job Title")
-    description = models.TextField(verbose_name="Job Description")
-    salary = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True, blank=True, verbose_name="Salary"
-    )
-    applied_on = models.DateTimeField(verbose_name="Date of Action")
-    user = models.ForeignKey(
-        UserProfile, on_delete=models.CASCADE, related_name="jobs"
-    )
-    status = models.CharField(
-        max_length=20, choices=LIST_CHOICES, default="WISH_LIST", verbose_name="Status"
-    )
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Created At")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Last Updated")
+    company = models.CharField(max_length=100)
+    location = models.CharField(max_length=100)
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    salary = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    applied_on = models.DateTimeField()
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name="jobs")
+    status = models.CharField(max_length=20, choices=LIST_CHOICES, default="WISH_LIST")
+    work_type = models.ForeignKey(WorkType, on_delete=models.SET_NULL, null=True, blank=True, related_name="jobs")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.title} at {self.company}"
 
     class Meta:
         ordering = ["-applied_on"]
-        verbose_name = "Job"
-        verbose_name_plural = "Jobs"

@@ -174,6 +174,9 @@ SIMPLE_JWT = {
     'AUTH_COOKIE_HTTP_ONLY': True,
     'AUTH_COOKIE_SECURE': True,
     'AUTH_COOKIE_SAMESITE': 'None',
+    'ROTATE_REFRESH_TOKENS': True, #When the user refreshes their token, they get a new refresh token (rotation).
+    'BLACKLIST_AFTER_ROTATION': True #The old refresh token is automatically blacklisted during token rotation.
+
 }
 
 
