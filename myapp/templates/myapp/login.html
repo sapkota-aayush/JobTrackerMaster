@@ -5,7 +5,6 @@
     <meta charset="UTF-8" />
     <title>JobSearchMaster</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- Bootstrap 5 CDN -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -20,17 +19,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark custom-navbar shadow-sm">
       <div class="container">
-        <a
-          class="navbar-brand fw-bold custom-brand d-flex align-items-center"
-          href="#"
-        >
-          <img
-            class="custom-logo"
-            src="{% static 'myapp/images/jobSearchMasterLogo.png' %}"
-            alt="Logo"
-          />
-          JobSearchMaster
-        </a>
+        <a class="navbar-brand fw-bold" href="#">JobSearchMaster</a>
         <button
           class="navbar-toggler"
           type="button"
@@ -62,9 +51,7 @@
           </ul>
           <div class="d-flex gap-2">
             <a href="#" class="btn btn-outline-light">Login</a>
-            <a href="#" class="btn btn-primary custom-signup-btn"
-              >Sign Up For Free</a
-            >
+            <a href="#" class="btn btn-primary">Sign Up For Free</a>
           </div>
         </div>
       </div>
@@ -73,21 +60,20 @@
     <!-- Hero Section -->
     <section class="container hero-section-bg">
       <div class="row align-items-center">
-        <div class="col-md-6">
-          <div class="hero-highlight">
-            <h1 class="display-5 fw-bold text-black mb-3">
-              Simplify Your Job Search
-            </h1>
-            <p class="lead custom-subtext">
-              <strong
-                >Track applications and take control of your career
-                journey.</strong
-              >
-            </p>
-            <a href="#" class="btn btn-lg btn-primary custom-signup-btn"
-              >Get Started</a
+        <div class="col-md-6 text-center text-md-start">
+          <h1 class="display-5 fw-bold text-black mb-3 animate-fade">
+            Simplify Your Job Search
+          </h1>
+          <p class="lead custom-subtext">
+            <strong
+              >Track applications and take control of your career
+              journey.</strong
             >
-          </div>
+          </p>
+          <p class="tagline animate-slide">
+            Get organized and efficient with JobSearchMaster
+          </p>
+          <a href="#" class="btn btn-lg btn-primary mt-3">Start Now</a>
         </div>
         <div class="col-md-6 text-center">
           <img

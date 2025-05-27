@@ -13,7 +13,13 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, get_user_model
 from rest_framework.exceptions import AuthenticationFailed
 from django.http import HttpResponse
-from rest_framework import status 
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
+ 
 
 # HTML page view
 def home(request):
@@ -86,3 +92,16 @@ class CustomRefreshTokenView(TokenRefreshView):
 
         except Exception as e:
             return Response({'error': 'Token refresh failed'}, status=401)
+
+
+class LogoutView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        tokens = OutstandingToken.objects.filter(user_id=request.user.id)
+        for token in tokens:
+            _, _ = BlacklistedToken.objects.get_or_create(token=token)
+
+        return Response({"message": "Logout successful"}, status=status.HTTP_200_OK)
+
+   

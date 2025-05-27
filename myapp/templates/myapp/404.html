@@ -1,0 +1,46 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Page Not Found - 404</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f9f9f9;
+        text-align: center;
+        padding: 50px;
+        color: #333;
+      }
+      h1 {
+        font-size: 72px;
+        margin-bottom: 0;
+      }
+      p {
+        font-size: 24px;
+        margin-top: 5px;
+        color: #666;
+      }
+      .emoji {
+        font-size: 100px;
+        margin-bottom: 20px;
+      }
+      a {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: bold;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="emoji">😕</div>
+
+    <h1>404</h1>
+    <p>Oops! The page you're looking for can't be found.</p>
+    <p><a href="{% url 'home' %}">Go back to Home</a></p>
+  </body>
+</html>

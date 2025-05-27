@@ -1,0 +1,48 @@
+[33mcommit 17f59c0d70d8bd437e02aaf9c026c30b86d0abff[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m
+Author: Aayush Sapkota <aayushsapkota1030@gmail.com>
+Date:   Mon May 26 10:45:38 2025 -0400
+
+    Custom jwt and exception handeling API done
+
+[33mcommit 845d6b3d9026969edfdebd9f0f2bbc03ff8fe991[m
+Author: Aayush Sapkota <aayushsapkota1030@gmail.com>
+Date:   Sun May 25 09:11:59 2025 -0400
+
+    Serializers done
+
+[33mcommit 37a19e74ea2222fd953a5fafa290d0a82f9af165[m
+Author: Aayush Sapkota <aayushsapkota1030@gmail.com>
+Date:   Sat May 24 17:16:04 2025 -0400
+
+    Home page done
+
+[33mcommit d6b6d638b6c98d7225b793f1efd74f694b35b082[m
+Author: Aayush Sapkota <aayushsapkota1030@gmail.com>
+Date:   Sat May 24 14:19:31 2025 -0400
+
+    Requirements added
+
+[33mcommit 81c99f6c32570f778b74e8c81f165f5c5bccd45b[m
+Author: Aayush Sapkota <aayushsapkota1030@gmail.com>
+Date:   Sat May 24 13:30:34 2025 -0400
+
+    Data connetivity done
+
+[33mcommit 04a2ecaff4751eb2f19b391a6590bdb8fe460ad6[m
+Merge: bbcefb0 68ae898
+Author: Aayush Sapkota <aayushsapkota1030@gmail.com>
+Date:   Sat May 24 12:45:35 2025 -0400
+
+    Merge branch 'master' of https://github.com/sapkota-aayush/JobTrackerMaster
+
+[33mcommit bbcefb00248183bb19df0be461cd54d7ac65207e[m
+Author: Aayush Sapkota <aayushsapkota1030@gmail.com>
+Date:   Sat May 24 12:43:29 2025 -0400
+
+    File setup
+
+[33mcommit 68ae898777203a3820bf7f85374af8ea52512d2e[m
+Author: Aayush Sapkota <aayushsapkota1030@gmail.com>
+Date:   Sat May 24 12:40:52 2025 -0400
+
+    Initial commit
