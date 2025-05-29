@@ -17,9 +17,11 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
- 
+from django.shortcuts import get_object_or_404
+from .throttling import ProgressiveThrottle
+from django.core.cache import cache
+import time
 
 # HTML page view
 def home(request):
@@ -34,6 +36,10 @@ def login_view(request):
     username = request.data.get('username')
     password = request.data.get('password')
     response = Response()
+    
+    throttle=ProgressiveThrottle()
+    if not throttle.allow_request(request,view=None):
+        return Response({'error':'Too many failed attempts. Try again later. '}, status=429)
 
     if not username or not password:
         raise AuthenticationFailed('Please provide username and password')
@@ -42,7 +48,8 @@ def login_view(request):
 
     if user is None:
         raise AuthenticationFailed('Invalid credentials')
-
+    
+    cache.delete(throttle-get_cache_key(request))
 
     try:
         user_profile = UserProfile.objects.get(user=user)
@@ -104,4 +111,42 @@ class LogoutView(APIView):
 
         return Response({"message": "Logout successful"}, status=status.HTTP_200_OK)
 
-   
+class BoardView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+
+        # Get the user's profile (make sure UserProfile is created automatically on signup)
+        user_profile = user.profile  # Or query manually if not using signals
+
+        serializer = JobSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save(user=user_profile)  # attach user
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class JobUpdateView(APIView):
+    permission_classes=[IsAuthenticated]
+    
+    def post(self,request,pk,*args,**kwargs):
+        job=get_object_or_404(JobModel,pk=pk,user=request.user.profile)
+        serializer=JobSerializer(job,data=request.data,partial=True)
+        
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUESET)
+
+class DeleteView(APIView):
+    permission_class=[IsAuthenticated]
+    
+    def post(self,request,pk,*args,**kwargs):
+        job=get_object_or_404(JobModel,pk=pk,user=request.user.profile)
+        job.status='REMOVED'
+        job.save()
+        return Response({'message':'Job removed from the wishlist.'})

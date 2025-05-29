@@ -18,7 +18,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email']
 
 class JobSerializer(serializers.ModelSerializer):
-    user = UserProfileSerializer()
+    user = UserProfileSerializer(read_only=True)
 
     class Meta:
         model = JobModel

@@ -24,6 +24,7 @@ LIST_CHOICES = (
     ("OFFERED", "Offered"),
     ("ACCEPTED", "Accepted"),
     ("DECLINED", "Declined"),
+    ('REMOVED','Removed'),
 )
 
 
