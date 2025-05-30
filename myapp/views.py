@@ -36,21 +36,25 @@ def login_view(request):
     username = request.data.get('username')
     password = request.data.get('password')
     response = Response()
-    
-    throttle=ProgressiveThrottle()
-    if not throttle.allow_request(request,view=None):
-        return Response({'error':'Too many failed attempts. Try again later. '}, status=429)
 
     if not username or not password:
         raise AuthenticationFailed('Please provide username and password')
 
     user = authenticate(request, username=username, password=password)
+    throttle = ProgressiveThrottle()
 
     if user is None:
+        if not throttle.allow_request(request, view=None):
+            wait_seconds = throttle.get_wait_time(request)
+            minutes, seconds = divmod(wait_seconds, 60)
+            wait_msg = f"Try again in {minutes} minute(s) and {seconds} second(s)."
+            return Response({'error': f'Too many failed attempts. {wait_msg}'}, status=429)
         raise AuthenticationFailed('Invalid credentials')
-    
-    cache.delete(throttle-get_cache_key(request))
 
+    # On successful login, reset the throttle counter
+    throttle.reset(request)
+
+    # Assuming you have UserProfile and UserProfileSerializer
     try:
         user_profile = UserProfile.objects.get(user=user)
     except UserProfile.DoesNotExist:
@@ -68,6 +72,7 @@ def login_view(request):
         'user': serialized_user,
     }
     return response
+
 
 
 # Custom refresh token view to handle HttpOnly cookies
