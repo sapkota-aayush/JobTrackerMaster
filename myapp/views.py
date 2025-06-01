@@ -1,33 +1,34 @@
-from django.shortcuts import render
-from django.contrib.auth import get_user_model
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth import authenticate, get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework import exceptions
-from django.views.decorators.csrf import ensure_csrf_cookie
-from .models import UserProfile, JobModel
-from .serializers import UserProfileSerializer, JobSerializer
-from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth import authenticate, get_user_model
 from rest_framework.exceptions import AuthenticationFailed
-from django.http import HttpResponse
-from rest_framework import status
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
-from django.shortcuts import get_object_or_404
-from .throttling import ProgressiveThrottle
-from django.core.cache import cache
-import time
+from .models import UserProfile, JobModel
+from .serializers import UserProfileSerializer, JobSerializer
+from django.contrib.auth.decorators import login_required
+
 
 # HTML page view
 def home(request):
     return render(request, "myapp/home.html")
 
 @csrf_exempt
+def login_page(request):
+    return render(request, "myapp/login.html")
+
+class DashboardPage(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        return render(request, "myapp/dashboard.html")
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 @ensure_csrf_cookie
@@ -41,20 +42,11 @@ def login_view(request):
         raise AuthenticationFailed('Please provide username and password')
 
     user = authenticate(request, username=username, password=password)
-    throttle = ProgressiveThrottle()
 
     if user is None:
-        if not throttle.allow_request(request, view=None):
-            wait_seconds = throttle.get_wait_time(request)
-            minutes, seconds = divmod(wait_seconds, 60)
-            wait_msg = f"Try again in {minutes} minute(s) and {seconds} second(s)."
-            return Response({'error': f'Too many failed attempts. {wait_msg}'}, status=429)
         raise AuthenticationFailed('Invalid credentials')
 
-    # On successful login, reset the throttle counter
-    throttle.reset(request)
-
-    # Assuming you have UserProfile and UserProfileSerializer
+    # Get user profile
     try:
         user_profile = UserProfile.objects.get(user=user)
     except UserProfile.DoesNotExist:
@@ -65,7 +57,15 @@ def login_view(request):
     access_token = str(refresh.access_token)
     refresh_token = str(refresh)
 
-    response.set_cookie(key='refresh_token', value=refresh_token, httponly=True)
+    response.set_cookie(
+        key='refresh_token', 
+        value=refresh_token, 
+        httponly=True,
+        secure=True,
+        samesite='None',
+        path='/'
+    )
+    
     response.data = {
         "status": "success",
         'access_token': access_token,
@@ -74,12 +74,11 @@ def login_view(request):
     return response
 
 
-
 # Custom refresh token view to handle HttpOnly cookies
 class CustomRefreshTokenView(TokenRefreshView):
     def post(self, request, *args, **kwargs):
         try:
-            refresh_token = request.COOKIES.get('refresh_token')  # 👈 Secure server-side access
+            refresh_token = request.COOKIES.get('refresh_token')  # Secure server-side access
 
             if not refresh_token:
                 return Response({'error': 'No refresh token'}, status=400)
@@ -102,7 +101,7 @@ class CustomRefreshTokenView(TokenRefreshView):
 
             return response
 
-        except Exception as e:
+        except Exception:
             return Response({'error': 'Token refresh failed'}, status=401)
 
 
@@ -116,42 +115,44 @@ class LogoutView(APIView):
 
         return Response({"message": "Logout successful"}, status=status.HTTP_200_OK)
 
+
 class BoardView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         user = request.user
 
-        # Get the user's profile (make sure UserProfile is created automatically on signup)
-        user_profile = user.profile  # Or query manually if not using signals
+        # Get the user's profile (adjust if your relation is different)
+        user_profile = user.profile if hasattr(user, 'profile') else UserProfile.objects.get(user=user)
 
         serializer = JobSerializer(data=request.data)
 
         if serializer.is_valid():
-            serializer.save(user=user_profile)  # attach user
+            serializer.save(user=user_profile)  # attach user profile
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class JobUpdateView(APIView):
-    permission_classes=[IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     
-    def post(self,request,pk,*args,**kwargs):
-        job=get_object_or_404(JobModel,pk=pk,user=request.user.profile)
-        serializer=JobSerializer(job,data=request.data,partial=True)
+    def post(self, request, pk, *args, **kwargs):
+        job = get_object_or_404(JobModel, pk=pk, user=request.user.profile)
+        serializer = JobSerializer(job, data=request.data, partial=True)
         
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data,status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUESET)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class DeleteView(APIView):
-    permission_class=[IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     
-    def post(self,request,pk,*args,**kwargs):
-        job=get_object_or_404(JobModel,pk=pk,user=request.user.profile)
-        job.status='REMOVED'
+    def post(self, request, pk, *args, **kwargs):
+        job = get_object_or_404(JobModel, pk=pk, user=request.user.profile)
+        job.status = 'REMOVED'
         job.save()
-        return Response({'message':'Job removed from the wishlist.'})
+        return Response({'message': 'Job removed from the wishlist.'})

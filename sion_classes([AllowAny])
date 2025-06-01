@@ -1,0 +1,97 @@
+* [33mcommit 6c7a748c6469330aa9d9a9eefb51a7e134ee33bc[m[33m ([m[1;36mHEAD[m[33m, [m[1;32mMaster[m[33m)[m
+[31m|[m Author: Aayush Sapkota <aayushsapkota1030@gmail.com>
+[31m|[m Date:   Sat May 31 22:53:16 2025 -0400
+[31m|[m 
+[31m|[m     Login system made Frontend
+[31m|[m 
+* [33mcommit ba544e042b475a8b4afb378c9821471980464085[m
+[31m|[m Author: Aayush Sapkota <aayushsapkota1030@gmail.com>
+[31m|[m Date:   Fri May 30 20:39:13 2025 -0400
+[31m|[m 
+[31m|[m     Minor error fixes
+[31m|[m 
+* [33mcommit 3b0d47155a9587e76cf87928d27b13d27922ba53[m[33m ([m[1;31morigin/master[m[33m)[m
+[31m|[m Author: Aayush Sapkota <aayushsapkota1030@gmail.com>
+[31m|[m Date:   Fri May 30 19:21:08 2025 -0400
+[31m|[m 
+[31m|[m     Throttle class fixed
+[31m|[m 
+* [33mcommit e50519dc3d37e7ffa679bf5987293bd624f6afff[m[33m ([m[1;32mMainPage[m[33m)[m
+[31m|[m Author: Aayush Sapkota <aayushsapkota1030@gmail.com>
+[31m|[m Date:   Thu May 29 11:55:19 2025 -0400
+[31m|[m 
+[31m|[m     Throttling done
+[31m|[m 
+* [33mcommit 8076f0bbd3457849c817bcee0854723938da2e44[m
+[31m|[m Author: Aayush Sapkota <aayushsapkota1030@gmail.com>
+[31m|[m Date:   Tue May 27 12:12:13 2025 -0400
+[31m|[m 
+[31m|[m     Added new model class for better filtering and searching
+[31m|[m 
+* [33mcommit 8a8cd108be1a737f1773c9b08b4df98f6b40d3a3[m
+[31m|[m Author: Aayush Sapkota <aayushsapkota1030@gmail.com>
+[31m|[m Date:   Tue May 27 09:25:30 2025 -0400
+[31m|[m 
+[31m|[m     Logout system added. Oustanding token and blacklist added in the database
+[31m|[m   
+[31m|[m * [33mcommit a97abaa007b391a8c76c4d8ad2248ddb481532dc[m[33m ([m[1;35mrefs/stash[m[33m)[m
+[31m|[m[31m/[m[33m|[m Merge: 17f59c0 2646e3f
+[31m|[m [33m|[m Author: Aayush Sapkota <aayushsapkota1030@gmail.com>
+[31m|[m [33m|[m Date:   Tue May 27 06:40:14 2025 -0400
+[31m|[m [33m|[m 
+[31m|[m [33m|[m     On master: WIP: Before going back to jwt commit
+[31m|[m [33m|[m 
+[31m|[m * [33mcommit 2646e3f42b78f9c3d0926d65b7ee32c92e88157d[m
+[31m|[m[31m/[m  Author: Aayush Sapkota <aayushsapkota1030@gmail.com>
+[31m|[m   Date:   Tue May 27 06:40:14 2025 -0400
+[31m|[m   
+[31m|[m       index on master: 17f59c0 Custom jwt and exception handeling API done
+[31m|[m 
+* [33mcommit 17f59c0d70d8bd437e02aaf9c026c30b86d0abff[m
+[33m|[m Author: Aayush Sapkota <aayushsapkota1030@gmail.com>
+[33m|[m Date:   Mon May 26 10:45:38 2025 -0400
+[33m|[m 
+[33m|[m     Custom jwt and exception handeling API done
+[33m|[m 
+* [33mcommit 845d6b3d9026969edfdebd9f0f2bbc03ff8fe991[m
+[33m|[m Author: Aayush Sapkota <aayushsapkota1030@gmail.com>
+[33m|[m Date:   Sun May 25 09:11:59 2025 -0400
+[33m|[m 
+[33m|[m     Serializers done
+[33m|[m 
+* [33mcommit 37a19e74ea2222fd953a5fafa290d0a82f9af165[m
+[33m|[m Author: Aayush Sapkota <aayushsapkota1030@gmail.com>
+[33m|[m Date:   Sat May 24 17:16:04 2025 -0400
+[33m|[m 
+[33m|[m     Home page done
+[33m|[m 
+* [33mcommit d6b6d638b6c98d7225b793f1efd74f694b35b082[m
+[33m|[m Author: Aayush Sapkota <aayushsapkota1030@gmail.com>
+[33m|[m Date:   Sat May 24 14:19:31 2025 -0400
+[33m|[m 
+[33m|[m     Requirements added
+[33m|[m 
+* [33mcommit 81c99f6c32570f778b74e8c81f165f5c5bccd45b[m
+[33m|[m Author: Aayush Sapkota <aayushsapkota1030@gmail.com>
+[33m|[m Date:   Sat May 24 13:30:34 2025 -0400
+[33m|[m 
+[33m|[m     Data connetivity done
+[33m|[m   
+*   [33mcommit 04a2ecaff4751eb2f19b391a6590bdb8fe460ad6[m
+[34m|[m[35m\[m  Merge: bbcefb0 68ae898
+[34m|[m [35m|[m Author: Aayush Sapkota <aayushsapkota1030@gmail.com>
+[34m|[m [35m|[m Date:   Sat May 24 12:45:35 2025 -0400
+[34m|[m [35m|[m 
+[34m|[m [35m|[m     Merge branch 'master' of https://github.com/sapkota-aayush/JobTrackerMaster
+[34m|[m [35m|[m 
+[34m|[m * [33mcommit 68ae898777203a3820bf7f85374af8ea52512d2e[m
+[34m|[m   Author: Aayush Sapkota <aayushsapkota1030@gmail.com>
+[34m|[m   Date:   Sat May 24 12:40:52 2025 -0400
+[34m|[m   
+[34m|[m       Initial commit
+[34m|[m 
+* [33mcommit bbcefb00248183bb19df0be461cd54d7ac65207e[m[33m ([m[1;32mmaster[m[33m)[m
+  Author: Aayush Sapkota <aayushsapkota1030@gmail.com>
+  Date:   Sat May 24 12:43:29 2025 -0400
+  
+      File setup

@@ -3,137 +3,106 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>JobSearchMaster</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-    />
-    <link rel="stylesheet" href="{% static 'myapp/css/home.css' %}" />
+    <title>Login</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 50px;
+        background: #f9f9f9;
+      }
+      .login-container {
+        max-width: 400px;
+        margin: auto;
+        padding: 30px;
+        background: white;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+      }
+      input {
+        width: 100%;
+        padding: 10px;
+        margin-top: 15px;
+        margin-bottom: 20px;
+      }
+      button {
+        width: 100%;
+        padding: 10px;
+        background: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      .error {
+        color: red;
+        margin-top: -10px;
+        margin-bottom: 20px;
+      }
+    </style>
   </head>
-  <body class="bg-white">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark custom-navbar shadow-sm">
-      <div class="container">
-        <a class="navbar-brand fw-bold" href="#">JobSearchMaster</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav me-auto">
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href="#"
-                id="featuresDropdown"
-                role="button"
-                data-bs-toggle="dropdown"
-              >
-                All Features
-              </a>
-              <ul class="dropdown-menu">
-                <li>
-                  <a class="dropdown-item" href="#">Track Applications</a>
-                </li>
-                <li><a class="dropdown-item" href="#">Job Wishlist</a></li>
-                <li><a class="dropdown-item" href="#">Status Updates</a></li>
-              </ul>
-            </li>
-          </ul>
-          <div class="d-flex gap-2">
-            <a href="#" class="btn btn-outline-light">Login</a>
-            <a href="#" class="btn btn-primary">Sign Up For Free</a>
-          </div>
-        </div>
-      </div>
-    </nav>
+  <body>
+    <div class="login-container">
+      <h2>Login</h2>
+      <div class="error" id="error-message"></div>
+      <form id="login-form">
+        <input
+          type="text"
+          name="username"
+          id="username"
+          placeholder="Username"
+          required
+        />
+        <input
+          type="password"
+          name="password"
+          id="password"
+          placeholder="Password"
+          required
+        />
+        <button type="submit">Login</button>
+      </form>
+    </div>
 
-    <!-- Hero Section -->
-    <section class="container hero-section-bg">
-      <div class="row align-items-center">
-        <div class="col-md-6 text-center text-md-start">
-          <h1 class="display-5 fw-bold text-black mb-3 animate-fade">
-            Simplify Your Job Search
-          </h1>
-          <p class="lead custom-subtext">
-            <strong
-              >Track applications and take control of your career
-              journey.</strong
-            >
-          </p>
-          <p class="tagline animate-slide">
-            Get organized and efficient with JobSearchMaster
-          </p>
-          <a href="#" class="btn btn-lg btn-primary mt-3">Start Now</a>
-        </div>
-        <div class="col-md-6 text-center">
-          <img
-            src="{% static 'myapp/images/JobSearchHome.png' %}"
-            alt="Young professional using laptop"
-            class="img-fluid hero-image"
-          />
-        </div>
-      </div>
-    </section>
+    <script>
+      // Get CSRF token from cookies
+      function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(";").shift();
+      }
 
-    <!-- How It Works Section -->
-    <section class="bg-light py-5">
-      <div class="container">
-        <h2 class="text-center fw-bold mb-4">How It Works</h2>
-        <div class="row text-center">
-          <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm border-0">
-              <div class="card-body">
-                <i class="bi bi-pencil-square fs-1 text-primary mb-3"></i>
-                <h5 class="fw-bold">Create Your Profile</h5>
-                <p class="text-muted">
-                  Set up your profile and define your job goals.
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm border-0">
-              <div class="card-body">
-                <i class="bi bi-journal-check fs-1 text-success mb-3"></i>
-                <h5 class="fw-bold">Track Every Application</h5>
-                <p class="text-muted">
-                  Organize job applications with timelines and statuses.
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm border-0">
-              <div class="card-body">
-                <i class="bi bi-award fs-1 text-warning mb-3"></i>
-                <h5 class="fw-bold">Achieve Career Success</h5>
-                <p class="text-muted">
-                  Stay motivated and reach your dream job faster.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+      document
+        .getElementById("login-form")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
 
-    <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-3">
-      <div class="container">
-        &copy; 2025 JobSearchMaster. All rights reserved.
-      </div>
-    </footer>
+          const username = document.getElementById("username").value;
+          const password = document.getElementById("password").value;
+          const errorMessage = document.getElementById("error-message");
+          errorMessage.innerText = "";
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+          try {
+            const response = await fetch("http://localhost:8080/api/login/", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCookie("csrftoken"),
+              },
+              credentials: "include", // Very important for cookies like refresh_token
+              body: JSON.stringify({ username, password }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.status === "success") {
+              window.location.href = "/dashboard/";
+            } else {
+              errorMessage.innerText = data.error || "Login failed.";
+            }
+          } catch (err) {
+            console.error("Login failed:", err);
+            errorMessage.innerText = "Something went wrong. Try again.";
+          }
+        });
+    </script>
   </body>
 </html>
