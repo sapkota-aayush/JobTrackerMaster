@@ -9,7 +9,7 @@ from .views import (
     JobUpdateView,
     DeleteView,
     login_view,
-    DashboardPage
+    dashboard_view
 )
 from django.conf import settings
 from django.conf.urls.static import static
@@ -18,7 +18,7 @@ urlpatterns = [
     path('', home, name='home'),
     path('login/', login_page, name='login_page'),
     path('api/login/', login_view, name='login_view'),  # Removed .as_view() because login_view is a function
-    path('dashboard/', DashboardPage.as_view(), name='dashboard'),
+    path('dashboard/', dashboard_view, name='dashboard'),    
     path('api/token/refresh/', CustomRefreshTokenView.as_view(), name='token_refresh'),
     path('api/logout/', LogoutView.as_view(), name='auth_logout'),
     path('api/board/', BoardView.as_view(), name='Whislist'),

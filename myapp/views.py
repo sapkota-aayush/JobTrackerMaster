@@ -13,6 +13,9 @@ from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, Bl
 from .models import UserProfile, JobModel
 from .serializers import UserProfileSerializer, JobSerializer
 from django.contrib.auth.decorators import login_required
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from django.shortcuts import redirect
+
 
 
 # HTML page view
@@ -23,11 +26,24 @@ def home(request):
 def login_page(request):
     return render(request, "myapp/login.html")
 
-class DashboardPage(APIView):
-    permission_classes = [IsAuthenticated]
+def dashboard_view(request):
+    jwt_authenticator = JWTAuthentication()
+    
+    # Read token from cookie
+    token = request.COOKIES.get('access_token')
+    if not token:
+        return redirect('login_page')
 
-    def get(self, request):
-        return render(request, "myapp/dashboard.html")
+    try:
+        validated_token = jwt_authenticator.get_validated_token(token)
+        user = jwt_authenticator.get_user(validated_token)
+    except AuthenticationFailed:
+        return redirect('login_page')
+
+    context = {"user": user}
+    return render(request, "myapp/dashboard.html", context)
+
+
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -58,14 +74,14 @@ def login_view(request):
     refresh_token = str(refresh)
 
     response.set_cookie(
-        key='refresh_token', 
-        value=refresh_token, 
+        key='refresh_token',
+        value=refresh_token,
         httponly=True,
         secure=True,
         samesite='None',
         path='/'
     )
-    
+
     response.data = {
         "status": "success",
         'access_token': access_token,
@@ -136,21 +152,21 @@ class BoardView(APIView):
 
 class JobUpdateView(APIView):
     permission_classes = [IsAuthenticated]
-    
+
     def post(self, request, pk, *args, **kwargs):
         job = get_object_or_404(JobModel, pk=pk, user=request.user.profile)
         serializer = JobSerializer(job, data=request.data, partial=True)
-        
+
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class DeleteView(APIView):
     permission_classes = [IsAuthenticated]
-    
+
     def post(self, request, pk, *args, **kwargs):
         job = get_object_or_404(JobModel, pk=pk, user=request.user.profile)
         job.status = 'REMOVED'
