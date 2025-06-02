@@ -19,23 +19,24 @@
         justify-content: center;
       }
       .login-container {
-        max-width: 400px;
+        max-width: 370px;
         width: 100%;
-        padding: 2.5rem 2rem 2rem 2rem;
+        padding: 2.2rem 1.5rem 1.5rem 1.5rem;
         background: #fff;
         box-shadow: 0 8px 32px rgba(13, 59, 102, 0.12);
         border-radius: 1.5rem;
         margin: 40px auto;
+        position: relative;
       }
       .login-title {
         text-align: center;
         font-weight: 700;
         color: #0d3b66;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1.3rem;
         letter-spacing: 1px;
       }
       .form-group {
-        margin-bottom: 1.5rem;
+        margin-bottom: 1.3rem;
         position: relative;
       }
       .form-label {
@@ -46,13 +47,15 @@
       }
       .form-input {
         width: 100%;
-        padding: 12px 44px 12px 16px;
+        box-sizing: border-box;
+        padding: 11px 42px 11px 15px;
         border: 1px solid #d0d7de;
         border-radius: 2rem;
         font-size: 1rem;
         background: #f7fafc;
         transition: border-color 0.2s;
         outline: none;
+        display: block;
       }
       .form-input:focus {
         border-color: #0d3b66;
@@ -80,10 +83,38 @@
         letter-spacing: 0.5px;
         box-shadow: 0 2px 8px rgba(13, 59, 102, 0.08);
         transition: background 0.2s;
-        margin-top: 0.5rem;
+        margin-top: 0.3rem;
       }
       .login-btn:hover {
         background: #145da0;
+      }
+      .social-login-label {
+        text-align: center;
+        margin: 1.2rem 0 0.5rem 0;
+        color: #888;
+        font-size: 0.97rem;
+      }
+      .social-login-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 0.5rem;
+      }
+      .social-btn {
+        background: #fff;
+        border: 1px solid #d0d7de;
+        border-radius: 50%;
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(13, 59, 102, 0.06);
+        cursor: pointer;
+        transition: box-shadow 0.2s;
+      }
+      .social-btn:hover {
+        box-shadow: 0 4px 16px rgba(13, 59, 102, 0.13);
       }
       .error {
         color: #d90429;
@@ -93,7 +124,7 @@
       }
       .login-footer {
         text-align: center;
-        margin-top: 1.5rem;
+        margin-top: 1.2rem;
         color: #888;
         font-size: 0.97rem;
       }
@@ -104,6 +135,16 @@
       }
       .login-footer a:hover {
         text-decoration: underline;
+      }
+      @media (max-width: 480px) {
+        .login-container {
+          padding: 1.2rem 0.5rem 1rem 0.5rem;
+          border-radius: 1rem;
+        }
+        .form-input {
+          font-size: 0.98rem;
+          padding: 10px 38px 10px 12px;
+        }
       }
     </style>
   </head>
@@ -144,6 +185,18 @@
         </div>
         <button type="submit" class="login-btn">Login</button>
       </form>
+      <div class="social-login-label">or sign in with</div>
+      <div class="social-login-buttons">
+        <a href="#" title="Sign in with Google" class="social-btn">
+          <i class="bi bi-google" style="color: #ea4335; font-size: 1.4rem"></i>
+        </a>
+        <a href="#" title="Sign in with Facebook" class="social-btn">
+          <i
+            class="bi bi-facebook"
+            style="color: #1877f3; font-size: 1.4rem"
+          ></i>
+        </a>
+      </div>
       <div class="login-footer">
         Don't have an account?
         <a href="#">Register</a>
