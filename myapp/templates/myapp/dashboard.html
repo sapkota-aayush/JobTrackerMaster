@@ -1140,11 +1140,10 @@
         try {
           const job = await saveJob(jobData);
           if (job) {
-            addJobCard(job);
-            updateStatusCounts([job]); // Update counts with the new job
             closeModal();
             document.getElementById("jobForm").reset();
             showToast("Job saved successfully!");
+            loadJobs(); // <-- This will update cards and counts for ALL jobs!
           }
         } catch (error) {
           showToast("Failed to save job: " + error.message, false);
