@@ -46,6 +46,7 @@ def dashboard_view(request):
 
 
 @api_view(['POST'])
+
 @permission_classes([AllowAny])
 @ensure_csrf_cookie
 def login_view(request):
@@ -171,4 +172,17 @@ class DeleteView(APIView):
         job = get_object_or_404(JobModel, pk=pk, user=request.user.profile)
         job.status = 'REMOVED'
         job.save()
-        return Response({'message': 'Job removed from the wishlist.'})
+        return Response({
+            "success":true,
+            "message":"Job removed from the wishlist."
+        })
+
+class getView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        user_profile = request.user.profile
+        jobs = user_profile.jobs.all()
+        serializer = JobSerializer(jobs, many=True)
+        return Response(serializer.data)
+ 

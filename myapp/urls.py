@@ -9,7 +9,8 @@ from .views import (
     JobUpdateView,
     DeleteView,
     login_view,
-    dashboard_view
+    dashboard_view,
+    getView
 )
 from django.conf import settings
 from django.conf.urls.static import static
@@ -24,4 +25,5 @@ urlpatterns = [
     path('api/board/', BoardView.as_view(), name='Whislist'),
     path('api/update/<int:pk>/', JobUpdateView.as_view(), name='Update'),
     path('api/delete/<int:pk>/', DeleteView.as_view(), name='delete'),
+    path('api/get/', getView.as_view(), name='get'),\
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
