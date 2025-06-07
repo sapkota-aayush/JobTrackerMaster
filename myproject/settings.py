@@ -165,7 +165,7 @@ REST_FRAMEWORK = {
 from datetime import timedelta
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=55),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
@@ -173,7 +173,7 @@ SIMPLE_JWT = {
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'ALGORITHM': 'HS256',
     'SIGNING_KEY': SECRET_KEY,
-    'AUTH_COOKIE': 'refresh_token',          # optional if you're doing cookie-based
+    'AUTH_COOKIE': 'refresh_token',          # optional if  doing cookie-based
     'AUTH_COOKIE_HTTP_ONLY': True,
     'AUTH_COOKIE_SECURE': True,
     'AUTH_COOKIE_SAMESITE': 'None',

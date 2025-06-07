@@ -10,7 +10,8 @@ from .views import (
     DeleteView,
     login_view,
     dashboard_view,
-    getView
+    GetView,
+    JobDetailView
 )
 from django.conf import settings
 from django.conf.urls.static import static
@@ -23,7 +24,8 @@ urlpatterns = [
     path('api/token/refresh/', CustomRefreshTokenView.as_view(), name='token_refresh'),
     path('api/logout/', LogoutView.as_view(), name='auth_logout'),
     path('api/board/', BoardView.as_view(), name='Whislist'),
-    path('api/update/<int:pk>/', JobUpdateView.as_view(), name='Update'),
+    path('api/update/', JobUpdateView.as_view(), name='Update'),
     path('api/delete/<int:pk>/', DeleteView.as_view(), name='delete'),
-    path('api/get/', getView.as_view(), name='get'),\
+    path('api/get/', GetView.as_view(), name='get'),
+    path('api/get/<int:pk>/', JobDetailView.as_view(), name='job-detail'), 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

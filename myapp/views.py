@@ -154,15 +154,28 @@ class BoardView(APIView):
 class JobUpdateView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, pk, *args, **kwargs):
-        job = get_object_or_404(JobModel, pk=pk, user=request.user.profile)
-        serializer = JobSerializer(job, data=request.data, partial=True)
+    def post(self, request, *args, **kwargs):
+        try:
+            job_id = request.data.get('id')
+            if not job_id:
+                return Response(
+                    {"error": "Job ID is required"}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+                
+            job = get_object_or_404(JobModel, id=job_id, user=request.user.profile)
+            serializer = JobSerializer(job, data=request.data, partial=True)
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response(
+                {"error": str(e)}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class DeleteView(APIView):
@@ -177,12 +190,39 @@ class DeleteView(APIView):
             "message":"Job removed from the wishlist."
         })
 
-class getView(APIView):
+
+#Note dont user validation id user has no job fiels. There will be problem fetching from frontend 
+class GetView(APIView):
     permission_classes = [IsAuthenticated]
     
     def get(self, request):
-        user_profile = request.user.profile
-        jobs = user_profile.jobs.all()
-        serializer = JobSerializer(jobs, many=True)
-        return Response(serializer.data)
+        try:
+            user_profile = request.user.profile
+            jobs = user_profile.jobs.all()
+            if not jobs.exists():
+                return Response([], status=status.HTTP_200_OK)
+            serializer = JobSerializer(jobs, many=True)
+            return Response(serializer.data)
+        except AttributeError:
+            return Response([], status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(
+                {"error": str(e)}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
  
+
+class JobDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk, *args, **kwargs):
+        try:
+            job = get_object_or_404(JobModel, id=pk, user=request.user.profile)
+            serializer = JobSerializer(job)
+            return Response(serializer.data)
+        except Exception as e:
+            return Response(
+                {"error": str(e)}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
