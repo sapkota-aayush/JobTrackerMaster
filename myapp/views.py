@@ -15,6 +15,7 @@ from .serializers import UserProfileSerializer, JobSerializer
 from django.contrib.auth.decorators import login_required
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.shortcuts import redirect
+import requests
 
 
 
@@ -226,3 +227,15 @@ class JobDetailView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
+
+# OAuth Implementation
+
+def google_login_redirect(request):
+    google_auth_url=(
+        "https://accounts.google.com/o/oauth2/v2/auth"
+        "?response_type=code"
+        f"&client_id={settings.GOOGLE_CLIENT_ID}"
+        f"&redirect_uri={settings.GOOGLE_REDIRECT_URI}"
+        "&scope=openid email profile"
+    )
+    return redirect(google_auth_url)

@@ -101,6 +101,12 @@ DATABASES = {
 }
 
 
+#Setting up OAuth 2.0 
+GOOGLE_CLIENT_ID=config("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET=config("GOOGLE_CLIENT_SECRET")
+GOOGLE_REDIRECT_URI=config("GOOGLE_REDIRECT_URI")
+
+
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
