@@ -16,6 +16,10 @@ from django.contrib.auth.decorators import login_required
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.shortcuts import redirect
 import requests
+from django.conf import settings
+from django.contrib.auth.models import User
+from django.http import JsonResponse
+
 
 
 
@@ -239,3 +243,61 @@ def google_login_redirect(request):
         "&scope=openid email profile"
     )
     return redirect(google_auth_url)
+
+def google_callback(request):
+    code=request.GET.get('code')
+    
+    if not code:
+        return JsonResponse({'error':'No authorization code provided '},status=400)
+    
+    token_data={
+        'code':code,
+        'client_id':settings.GOOGLE_CLIENT_ID,
+        'client_secret':settings.GOOGLE_CLIENT_SECRET,
+        'redirect_uri':settings.GOOGLE_REDIRECT_URI,
+        'grant_type':'authorization_code'
+    }
+    
+    token_response=requests.post('https://oauth2.googleapis.com/token',data=token_data)
+    token_json=token_response.json()
+    access_token=token_json.get('access_token')
+    
+    if not access_token:
+        return JsonResponse({'error':'Failed to obtain the access token'},status=400)
+    
+    
+    userinfo_response=requests.get(
+        "https://www.googleapis.com/oauth2/v2/userinfo",
+        headers={"Authorization":f"Bearer{access_token}"}
+    )
+    
+    userinfo=userinfo_response.json()
+    email=userinfo.get('email')
+    name=userinfo.get('name')
+    
+    if not email:
+        return JsonResponse({'error':"Failed to retrieve user info."},status=400)
+    
+    try:
+        user = User.objects.get(email=email)
+        created = False
+    except User.DoesNotExist:
+        user=User.objects.create_user(username=email,email=email)
+        user.first_name=name
+        user.save()
+        
+        #Creating userprofile linked to user for one to one
+        UserProfile.objects.create(user=user)
+        created=True
+        
+    #Time to generate JWT tokens
+    refresh=RefreshToken.for_user(user)
+    access_token=str(refresh.access_token)
+    refresh_token=str(refresh)
+    
+    return JsonResponse({
+        'access_token':access_token,
+        'refresh_token':refresh_token,
+        'message':'User created' if created else 'User logged in'
+    })
+    

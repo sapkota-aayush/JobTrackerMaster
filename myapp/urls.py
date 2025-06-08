@@ -11,7 +11,9 @@ from .views import (
     login_view,
     dashboard_view,
     GetView,
-    JobDetailView
+    JobDetailView,
+    google_login_redirect,
+    google_callback
 )
 from django.conf import settings
 from django.conf.urls.static import static
@@ -27,5 +29,10 @@ urlpatterns = [
     path('api/update/', JobUpdateView.as_view(), name='Update'),
     path('api/delete/<int:pk>/', DeleteView.as_view(), name='delete'),
     path('api/get/', GetView.as_view(), name='get'),
-    path('api/get/<int:pk>/', JobDetailView.as_view(), name='job-detail'), 
+    path('api/get/<int:pk>/', JobDetailView.as_view(), name='job-detail'),
+    
+    #OAuth endpoints
+    path('auth/google/login/',google_login_redirect,name='google_login'),
+    path('api/oauth/callback/',google_callback, name='google_callback')
+     
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
