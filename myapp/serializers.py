@@ -1,7 +1,7 @@
 # serializers.py
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import UserProfile, JobModel
+from .models import UserProfile, JobModel, ContactMessage
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,3 +23,10 @@ class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = JobModel
         fields = '__all__'
+        
+class ContactSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=ContactMessage
+        fields = ['id', 'name', 'email', 'message', 'created_at']
+        read_only_fields=['id','created_at']
+    

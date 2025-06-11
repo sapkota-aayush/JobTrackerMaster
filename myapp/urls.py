@@ -13,7 +13,8 @@ from .views import (
     GetView,
     JobDetailView,
     google_login_redirect,
-    google_callback
+    google_callback,
+    ContactMessageView
 )
 from django.conf import settings
 from django.conf.urls.static import static
@@ -30,7 +31,7 @@ urlpatterns = [
     path('api/delete/<int:pk>/', DeleteView.as_view(), name='delete'),
     path('api/get/', GetView.as_view(), name='get'),
     path('api/get/<int:pk>/', JobDetailView.as_view(), name='job-detail'),
-    
+    path('api/contact/',ContactMessageView.as_view(),name='contact'),
     #OAuth endpoints
     path('auth/google/login/',google_login_redirect,name='google_login'),
     path('api/oauth/callback/',google_callback, name='google_callback')

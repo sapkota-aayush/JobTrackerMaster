@@ -10,8 +10,8 @@ from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
-from .models import UserProfile, JobModel
-from .serializers import UserProfileSerializer, JobSerializer
+from .models import UserProfile, JobModel,ContactMessage
+from .serializers import UserProfileSerializer, JobSerializer, ContactSerializer
 from django.contrib.auth.decorators import login_required
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.shortcuts import redirect
@@ -19,6 +19,7 @@ import requests
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.http import JsonResponse
+from .utils import send_contact_email_task
 
 
 
@@ -300,4 +301,30 @@ def google_callback(request):
         'refresh_token':refresh_token,
         'message':'User created' if created else 'User logged in'
     })
+    
+
+
+
+
+class ContactMessageView(APIView):
+    permission_classes = [AllowAny] 
+    def post(self,request):
+        serializer=ContactSerializer(data=request.data)
+        if serializer.is_valid():
+         
+            
+     #Abstraction form utils.py
+            send_contact_email_task.delay(
+                name=serializer.validated_data['name'],
+                email=serializer.validated_data['email'],
+                message=serializer.validated_data['message']
+            )
+            
+            serializer.save()
+            
+            return Response({"detail":"Message sent sucessfully."},status=status.HTTP_201_CREATED)
+        
+        
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    
     
