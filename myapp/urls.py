@@ -14,7 +14,8 @@ from .views import (
     JobDetailView,
     google_login_redirect,
     google_callback,
-    ContactMessageView
+    ContactMessageView,
+    AIAssistantView
 )
 from django.conf import settings
 from django.conf.urls.static import static
@@ -34,6 +35,8 @@ urlpatterns = [
     path('api/contact/',ContactMessageView.as_view(),name='contact'),
     #OAuth endpoints
     path('auth/google/login/',google_login_redirect,name='google_login'),
-    path('api/oauth/callback/',google_callback, name='google_callback')
+    path('api/oauth/callback/',google_callback, name='google_callback'),
+    path('api/ai-assistant/', AIAssistantView.as_view(), name='ai-assistant'),
+
      
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

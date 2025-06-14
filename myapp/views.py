@@ -20,7 +20,8 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from .utils import send_contact_email_task
-
+from openai import OpenAI
+from .openai_client import client
 
 
 
@@ -46,9 +47,24 @@ def dashboard_view(request):
     except AuthenticationFailed:
         return redirect('login_page')
 
-    context = {"user": user}
-    return render(request, "myapp/dashboard.html", context)
+    # Get the full user object with profile
+    try:
+        user_profile = UserProfile.objects.get(user=user)
+    except UserProfile.DoesNotExist:
+        # Handle case where profile doesn't exist
+        user_profile = None
 
+    # Create context with user details
+    context = {
+        "user": {
+            "username": user.username,
+            "email": user.email,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+        }
+    }
+    
+    return render(request, "myapp/dashboard.html", context)
 
 
 @api_view(['POST'])
@@ -327,4 +343,60 @@ class ContactMessageView(APIView):
         
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     
-    
+class AIAssistantView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+
+        question = request.data.get("message")
+        if not question:
+            return Response({"error": "No question provided."}, status=400)
+
+        try:
+            user_profile = request.user.profile
+            jobs = user_profile.jobs.all()
+
+            if not jobs.exists():
+                return Response({"reply": "You have no jobs in your tracker."})
+
+            # Convert jobs to a simple list of dictionaries for the AI to understand
+            job_list = [
+                {
+                    "title": job.title,
+                    "company": job.company,
+                    "status": job.status,
+                    "applied_on": job.applied_on.strftime('%Y-%m-%d'),
+                    "location": job.location,
+                    "salary": str(job.salary) if job.salary else "N/A"
+                }
+                for job in jobs
+            ]
+
+            # Create a prompt for OpenAI
+            system_message = (
+                "You are an assistant that helps users track and analyze their job applications. "
+                "Use the data provided to answer questions like how many jobs they’ve applied to, "
+                "how many were rejected, and so on."
+            )
+
+            user_prompt = f"""User has submitted the following jobs:
+{job_list}
+
+User asks: "{question}"
+Answer in a helpful and friendly way.
+"""
+
+            response = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": system_message},
+                    {"role": "user", "content": user_prompt}
+                ]
+            )
+
+            reply = response.choices[0].message.content
+            return Response({"reply": reply})
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
