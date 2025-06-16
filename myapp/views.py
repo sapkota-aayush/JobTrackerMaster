@@ -68,7 +68,6 @@ def dashboard_view(request):
 
 
 @api_view(['POST'])
-
 @permission_classes([AllowAny])
 @ensure_csrf_cookie
 def login_view(request):
@@ -399,4 +398,4 @@ Answer in a helpful and friendly way.
 
         except Exception as e:
             return Response({"error": str(e)}, status=500)
-
+           

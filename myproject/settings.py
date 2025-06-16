@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
+    'drf_yasg'
 ]
 
 MIDDLEWARE = [
@@ -123,6 +124,21 @@ CELERY_TASK_SERIALIZER = 'json'
 
 #OPEN Ai settings
 OPENAI_API_KEY = config("OPENAI_API_KEY")
+
+#Swagger settings
+
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+            'description': 'JWT Authorization header using the Bearer scheme. Example: "Bearer <token>"',
+        }
+    },
+    'DEFAULT_SECURITY': [{'Bearer': []}],
+}
 
 
 # Password validation
