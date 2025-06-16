@@ -382,7 +382,9 @@ class AIAssistantView(APIView):
 {job_list}
 
 User asks: "{question}"
-Answer in a helpful and friendly way.
+Only respond if the user is asking a specific question about their job applications.
+If the message is just a greeting or unclear, reply with: 
+"Hi! Ask me something about your job applications, like 'How many jobs have I applied to?' or 'Which ones are shortlisted?'"
 """
 
             response = client.chat.completions.create(
