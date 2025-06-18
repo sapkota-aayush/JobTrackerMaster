@@ -1,0 +1,120 @@
+/* =============================================================================
+   COMPONENTS.CSS - Job Cards, Modals, and UI Components
+   ============================================================================= */
+
+/* =============================================================================
+   JOB LIST STYLES
+   ============================================================================= */
+.job-list-container {
+  padding: 2rem;
+}
+
+.section-title {
+  color: var(--primary);
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--accent);
+}
+
+/* =============================================================================
+   JOB CARD STYLES
+   ============================================================================= */
+.job-card {
+  border-radius: 1.2rem;
+  box-shadow: 0 4px 20px rgba(13, 59, 102, 0.1);
+  transition: all 0.3s ease;
+  margin-bottom: 1.5rem;
+  border: none;
+  overflow: hidden;
+  animation: fadeIn 0.5s ease-in;
+}
+
+.job-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(13, 59, 102, 0.15);
+}
+
+.job-card .card-header {
+  background: var(--accent);
+  border-bottom: 1px solid rgba(13, 59, 102, 0.1);
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.job-card .card-title {
+  font-weight: 700;
+  color: var(--primary);
+  margin: 0;
+}
+
+.job-card .status-badge {
+  padding: 0.4rem 0.8rem;
+  border-radius: 1rem;
+  font-weight: 600;
+}
+
+.job-card .card-body {
+  padding: 1.5rem;
+}
+
+.job-card .company-name {
+  color: var(--secondary);
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.job-card .job-details {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.job-card .job-description {
+  color: #495057;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.job-card .salary {
+  font-weight: 600;
+  color: var(--success);
+}
+
+/* =============================================================================
+   ANIMATIONS
+   ============================================================================= */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =============================================================================
+   NO JOBS MESSAGE
+   ============================================================================= */
+.no-jobs-container {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 1.2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.no-jobs-icon {
+  font-size: 4rem;
+  color: #adb5bd;
+  margin-bottom: 1.5rem;
+} 

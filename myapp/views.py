@@ -1,39 +1,56 @@
-from django.shortcuts import render, get_object_or_404
+# =============================================================================
+# IMPORTS
+# =============================================================================
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, get_user_model
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.views import TokenRefreshView
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.exceptions import AuthenticationFailed
-from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
-from rest_framework.views import APIView
-from rest_framework import status
-from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
-from .models import UserProfile, JobModel,ContactMessage
-from .serializers import UserProfileSerializer, JobSerializer, ContactSerializer
 from django.contrib.auth.decorators import login_required
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from django.shortcuts import redirect
-import requests
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.http import JsonResponse
-from .utils import send_contact_email_task
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+
+# REST Framework imports
+from rest_framework.views import APIView
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.exceptions import AuthenticationFailed
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
+# JWT imports
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenRefreshView
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
+
+# Third-party imports
+import requests
 from openai import OpenAI
+
+# Local imports
+from .models import UserProfile, JobModel, ContactMessage
+from .serializers import UserProfileSerializer, JobSerializer, ContactSerializer
+from .utils import send_contact_email_task
 from .openai_client import client
 
 
+# =============================================================================
+# HTML PAGE VIEWS
+# =============================================================================
 
-# HTML page view
 def home(request):
+    """Render the home page."""
     return render(request, "myapp/home.html")
+
 
 @csrf_exempt
 def login_page(request):
+    """Render the login page."""
     return render(request, "myapp/login.html")
 
+
 def dashboard_view(request):
+    """Render the dashboard page with JWT authentication."""
     jwt_authenticator = JWTAuthentication()
     
     # Read token from cookie
@@ -51,7 +68,6 @@ def dashboard_view(request):
     try:
         user_profile = UserProfile.objects.get(user=user)
     except UserProfile.DoesNotExist:
-        # Handle case where profile doesn't exist
         user_profile = None
 
     # Create context with user details
@@ -67,10 +83,15 @@ def dashboard_view(request):
     return render(request, "myapp/dashboard.html", context)
 
 
+# =============================================================================
+# AUTHENTICATION VIEWS
+# =============================================================================
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 @ensure_csrf_cookie
 def login_view(request):
+    """Handle user login and return JWT tokens."""
     User = get_user_model()
     username = request.data.get('username')
     password = request.data.get('password')
@@ -112,11 +133,12 @@ def login_view(request):
     return response
 
 
-# Custom refresh token view to handle HttpOnly cookies
 class CustomRefreshTokenView(TokenRefreshView):
+    """Custom refresh token view to handle HttpOnly cookies."""
+    
     def post(self, request, *args, **kwargs):
         try:
-            refresh_token = request.COOKIES.get('refresh_token')  # Secure server-side access
+            refresh_token = request.COOKIES.get('refresh_token')
 
             if not refresh_token:
                 return Response({'error': 'No refresh token'}, status=400)
@@ -144,6 +166,7 @@ class CustomRefreshTokenView(TokenRefreshView):
 
 
 class LogoutView(APIView):
+    """Handle user logout and blacklist tokens."""
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
@@ -154,7 +177,12 @@ class LogoutView(APIView):
         return Response({"message": "Logout successful"}, status=status.HTTP_200_OK)
 
 
+# =============================================================================
+# JOB MANAGEMENT VIEWS
+# =============================================================================
+
 class BoardView(APIView):
+    """Handle job creation with duplicate prevention."""
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
@@ -196,6 +224,7 @@ class BoardView(APIView):
 
 
 class JobUpdateView(APIView):
+    """Handle job updates."""
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
@@ -223,6 +252,7 @@ class JobUpdateView(APIView):
 
 
 class DeleteView(APIView):
+    """Handle job deletion (soft delete by setting status to REMOVED)."""
     permission_classes = [IsAuthenticated]
 
     def post(self, request, pk, *args, **kwargs):
@@ -230,13 +260,13 @@ class DeleteView(APIView):
         job.status = 'REMOVED'
         job.save()
         return Response({
-            "success":true,
-            "message":"Job removed from the wishlist."
+            "success": True,
+            "message": "Job removed from the wishlist."
         })
 
 
-#Note dont user validation id user has no job fiels. There will be problem fetching from frontend 
 class GetView(APIView):
+    """Retrieve all jobs for the authenticated user."""
     permission_classes = [IsAuthenticated]
     
     def get(self, request):
@@ -254,9 +284,10 @@ class GetView(APIView):
                 {"error": str(e)}, 
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
- 
+
 
 class JobDetailView(APIView):
+    """Retrieve a specific job by ID."""
     permission_classes = [IsAuthenticated]
 
     def get(self, request, pk, *args, **kwargs):
@@ -271,10 +302,13 @@ class JobDetailView(APIView):
             )
 
 
-# OAuth Implementation
+# =============================================================================
+# OAUTH IMPLEMENTATION
+# =============================================================================
 
 def google_login_redirect(request):
-    google_auth_url=(
+    """Redirect user to Google OAuth login."""
+    google_auth_url = (
         "https://accounts.google.com/o/oauth2/v2/auth"
         "?response_type=code"
         f"&client_id={settings.GOOGLE_CLIENT_ID}"
@@ -283,7 +317,9 @@ def google_login_redirect(request):
     )
     return redirect(google_auth_url)
 
+
 def google_callback(request):
+    """Handle Google OAuth callback and create/authenticate user."""
     code = request.GET.get('code')
     if not code:
         return JsonResponse({'error': 'No authorization code provided'}, status=400)
@@ -347,17 +383,20 @@ def google_callback(request):
         path='/'
     )
     return response
-    
 
+
+# =============================================================================
+# UTILITY VIEWS
+# =============================================================================
 
 class ContactMessageView(APIView):
+    """Handle contact form submissions."""
     permission_classes = [AllowAny] 
-    def post(self,request):
-        serializer=ContactSerializer(data=request.data)
+    
+    def post(self, request):
+        serializer = ContactSerializer(data=request.data)
         if serializer.is_valid():
-         
-            
-     #Abstraction form utils.py
+            # Abstraction from utils.py
             send_contact_email_task.delay(
                 name=serializer.validated_data['name'],
                 email=serializer.validated_data['email'],
@@ -366,16 +405,16 @@ class ContactMessageView(APIView):
             
             serializer.save()
             
-            return Response({"detail":"Message sent sucessfully."},status=status.HTTP_201_CREATED)
+            return Response({"detail": "Message sent successfully."}, status=status.HTTP_201_CREATED)
         
-        
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+
 class AIAssistantView(APIView):
+    """Handle AI assistant queries about job applications."""
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-
         question = request.data.get("message")
         if not question:
             return Response({"error": "No question provided."}, status=400)

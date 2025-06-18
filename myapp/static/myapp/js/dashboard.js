@@ -1,4 +1,10 @@
-// --- Constants ---
+// =============================================================================
+// DASHBOARD.JS - Main Dashboard Functionality
+// =============================================================================
+
+// =============================================================================
+// CONSTANTS
+// =============================================================================
 const STATUS_MAP = {
   WISH_LIST: { text: "Wishlist", color: "info" },
   APPLIED: { text: "Applied", color: "primary" },
@@ -10,7 +16,9 @@ const STATUS_MAP = {
   DECLINED: { text: "Declined", color: "secondary" },
 };
 
-// --- DOM Elements ---
+// =============================================================================
+// DOM ELEMENTS
+// =============================================================================
 const elements = {
   addJobBtn: document.getElementById("addJobBtn"),
   jobModal: document.getElementById("jobModal"),
@@ -35,10 +43,15 @@ const elements = {
   chatSendBtn: document.getElementById("chatSendBtn"),
 };
 
-// --- State ---
+// =============================================================================
+// STATE
+// =============================================================================
 let currentEditingJobId = null;
 
-// --- Helper Functions ---
+// =============================================================================
+// HELPER FUNCTIONS
+// =============================================================================
+
 function getCookie(name) {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
@@ -78,7 +91,10 @@ function formatCurrency(amount) {
   }).format(amount);
 }
 
-// --- User Initialization ---
+// =============================================================================
+// USER INITIALIZATION
+// =============================================================================
+
 function initializeUserElements() {
   // Get the DOM elements
   const avatarElement = document.getElementById("userAvatar");
@@ -114,7 +130,10 @@ function initializeUserElements() {
   avatarElement.textContent = initials || "?";
 }
 
-// --- Modal Functionality ---
+// =============================================================================
+// MODAL FUNCTIONALITY
+// =============================================================================
+
 function openJobModal() {
   // Reset form and clear editing state
   currentEditingJobId = null;
@@ -140,7 +159,10 @@ function closeModal() {
   document.getElementById("saveJob").textContent = "Save Job";
 }
 
-// --- Job Card Rendering ---
+// =============================================================================
+// JOB CARD RENDERING
+// =============================================================================
+
 function addJobCard(job) {
   if (elements.noJobsMessage) {
     elements.noJobsMessage.style.display = "none";
@@ -195,7 +217,10 @@ function addJobCard(job) {
   elements.jobList.appendChild(card);
 }
 
-// --- Status Counts ---
+// =============================================================================
+// STATUS COUNTS
+// =============================================================================
+
 function updateStatusCounts(jobs) {
   const counts = {
     WISH_LIST: 0,
@@ -227,7 +252,10 @@ function updateStatusCounts(jobs) {
   updateCount("shortListedCount", counts.SHORTLISTED);
 }
 
-// --- API Functions ---
+// =============================================================================
+// API FUNCTIONS
+// =============================================================================
+
 async function loadJobs() {
   try {
     const accessToken = getCookie("access_token");
@@ -329,7 +357,10 @@ async function saveJob(jobData) {
   }
 }
 
-// --- Event Handlers ---
+// =============================================================================
+// EVENT HANDLERS
+// =============================================================================
+
 function setupEventListeners() {
   // Job Modal
   if (elements.addJobBtn)

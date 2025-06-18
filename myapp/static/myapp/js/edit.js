@@ -1,4 +1,10 @@
-// --- Edit Job Functionality ---
+// =============================================================================
+// EDIT.JS - Job Edit Functionality
+// =============================================================================
+
+// =============================================================================
+// API FUNCTIONS
+// =============================================================================
 
 // Function to fetch job details by ID
 async function fetchJobDetails(jobId) {
@@ -89,6 +95,10 @@ async function updateJob(jobId, jobData) {
   }
 }
 
+// =============================================================================
+// FORM MANAGEMENT
+// =============================================================================
+
 // Function to populate form with job data
 function populateJobForm(job) {
   document.getElementById("title").value = job.title || "";
@@ -109,6 +119,10 @@ function clearJobForm() {
   document.getElementById("saveJob").textContent = "Save Job";
 }
 
+// =============================================================================
+// MODAL MANAGEMENT
+// =============================================================================
+
 // Function to open edit modal
 async function openEditModal(jobId) {
   try {
@@ -124,6 +138,10 @@ async function openEditModal(jobId) {
     showToast("Failed to load job details: " + error.message, false);
   }
 }
+
+// =============================================================================
+// SAVE/UPDATE HANDLING
+// =============================================================================
 
 // Function to handle save/update job
 async function handleSaveJob() {
@@ -190,6 +208,10 @@ async function handleSaveJob() {
   }
 }
 
+// =============================================================================
+// EVENT LISTENERS
+// =============================================================================
+
 // Function to setup edit event listeners
 function setupEditEventListeners() {
   // Add event delegation for edit buttons (since they're dynamically created)
@@ -213,10 +235,18 @@ function setupEditEventListeners() {
   }
 }
 
+// =============================================================================
+// INITIALIZATION
+// =============================================================================
+
 // Initialize edit functionality when DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
   setupEditEventListeners();
 });
+
+// =============================================================================
+// EXPORTS
+// =============================================================================
 
 // Export functions for use in dashboard.js if needed
 window.editJob = openEditModal;
