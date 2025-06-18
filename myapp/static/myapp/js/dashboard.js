@@ -116,14 +116,28 @@ function initializeUserElements() {
 
 // --- Modal Functionality ---
 function openJobModal() {
-  elements.jobModal.style.display = "flex";
+  // Reset form and clear editing state
+  currentEditingJobId = null;
+  document.getElementById("jobForm").reset();
+  document.getElementById("modalTitle").textContent = "Add New Job";
+  document.getElementById("saveJob").textContent = "Save Job";
+  
+  // Set today's date as default
   const today = new Date();
   const formattedDate = today.toISOString().split("T")[0];
   document.getElementById("appliedDate").value = formattedDate;
+  
+  // Show modal
+  elements.jobModal.style.display = "flex";
 }
 
 function closeModal() {
   elements.jobModal.style.display = "none";
+  // Reset form when closing
+  currentEditingJobId = null;
+  document.getElementById("jobForm").reset();
+  document.getElementById("modalTitle").textContent = "Add New Job";
+  document.getElementById("saveJob").textContent = "Save Job";
 }
 
 // --- Job Card Rendering ---
@@ -299,7 +313,11 @@ async function saveJob(jobData) {
         setTimeout(() => (window.location.href = "/login/"), 2000);
       } else {
         const errorData = await response.json();
-        throw new Error(errorData.detail || "Failed to save job");
+        // Handle duplicate job error specifically
+        if (errorData.error && errorData.error.includes("already exists")) {
+          throw new Error(errorData.error);
+        }
+        throw new Error(errorData.detail || errorData.error || "Failed to save job");
       }
       return null;
     }
@@ -327,56 +345,7 @@ function setupEventListeners() {
     if (e.target === elements.jobModal) closeModal();
   });
 
-  // Save Job
-  if (elements.saveJobBtn) {
-    elements.saveJobBtn.addEventListener("click", async () => {
-      // Get all form values
-      const title = document.getElementById("title").value.trim();
-      const company = document.getElementById("company").value.trim();
-      const location = document.getElementById("location").value.trim();
-      const description = document.getElementById("description").value.trim();
-      const salary = document.getElementById("salary").value;
-      const appliedDate = document.getElementById("appliedDate").value;
-      const status = document.getElementById("status").value;
-      const workType = document.getElementById("workType").value;
-
-      // Validate required fields
-      if (
-        !title ||
-        !company ||
-        !location ||
-        !description ||
-        !appliedDate ||
-        !status
-      ) {
-        showToast("Please fill in all required fields", false);
-        return;
-      }
-
-      const jobData = {
-        title,
-        company,
-        location,
-        description,
-        salary,
-        appliedDate,
-        status,
-        workType,
-      };
-
-      try {
-        const job = await saveJob(jobData);
-        if (job) {
-          closeModal();
-          elements.jobForm.reset();
-          showToast("Job saved successfully!");
-          loadJobs();
-        }
-      } catch (error) {
-        showToast("Failed to save job: " + error.message, false);
-      }
-    });
-  }
+  // Save Job event listener is now handled in edit.js
 
   // Logout
   if (elements.logoutButton) {

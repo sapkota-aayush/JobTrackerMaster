@@ -166,6 +166,29 @@ class BoardView(APIView):
         serializer = JobSerializer(data=request.data)
 
         if serializer.is_valid():
+            title = serializer.validated_data['title']
+            company = serializer.validated_data['company']
+            location = serializer.validated_data['location']
+            applied_on = serializer.validated_data['applied_on']
+
+            # Check if a job with the same title, company, location, and applied date already exists
+            existing_job = JobModel.objects.filter(
+                user=user_profile,
+                title=title,
+                company=company,
+                location=location,
+                applied_on=applied_on
+            ).first()
+
+            if existing_job:
+                return Response(
+                    {
+                        "error": "A job with the same title, company, location, and applied date already exists.",
+                        "existing_job_id": existing_job.id
+                    }, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
             serializer.save(user=user_profile)  # attach user profile
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -380,7 +403,7 @@ class AIAssistantView(APIView):
             # Create a prompt for OpenAI
             system_message = (
                 "You are an assistant that helps users track and analyze their job applications. "
-                "Use the data provided to answer questions like how many jobs they’ve applied to, "
+                "Use the data provided to answer questions like how many jobs they've applied to, "
                 "how many were rejected, and so on."
             )
 

@@ -1,150 +1,224 @@
-// Dummy job data (replace with your real data)
-const jobs = [
-  {
-    id: 1,
-    company: "Google",
-    location: "Mountain View",
-    title: "Software Engineer",
-    description: "Build cool stuff",
-    salary: 150000,
-    appliedDate: "2024-06-10",
-    status: "APPLIED",
-    workType: "FULL_TIME",
-  },
-  {
-    id: 2,
-    company: "Amazon",
-    location: "Seattle",
-    title: "DevOps Engineer",
-    description: "Maintain infrastructure",
-    salary: 130000,
-    appliedDate: "2024-05-20",
-    status: "INTERVIEWED",
-    workType: "FULL_TIME",
-  },
-];
+// --- Edit Job Functionality ---
 
-// Elements
-const modal = document.getElementById("jobModal");
-const jobForm = document.getElementById("jobForm");
-const modalTitle = modal.querySelector(".modal-title");
-const closeModalBtn = document.getElementById("closeJobModal");
-const addJobBtn = document.getElementById("addJobBtn");
-const jobList = document.getElementById("jobList");
-const saveJobBtn = document.getElementById("saveJob");
+// Function to fetch job details by ID
+async function fetchJobDetails(jobId) {
+  try {
+    const accessToken = getCookie("access_token");
+    const csrfToken = getCookie("csrftoken");
 
-// Input fields
-const inputJobId = document.getElementById("jobId");
-const inputCompany = document.getElementById("company");
-const inputLocation = document.getElementById("location");
-const inputTitle = document.getElementById("title");
-const inputDescription = document.getElementById("description");
-const inputSalary = document.getElementById("salary");
-const inputAppliedDate = document.getElementById("appliedDate");
-const inputStatus = document.getElementById("status");
-const inputWorkType = document.getElementById("workType");
+    if (!accessToken) {
+      showToast("Authentication required. Please login again.", false);
+      setTimeout(() => (window.location.href = "/login/"), 2000);
+      return null;
+    }
 
-// Function to open modal for Add or Edit
-function openModal(mode, jobData = null) {
-  if (mode === "add") {
-    modalTitle.textContent = "Add New Job Application";
-    jobForm.reset();
-    inputJobId.value = ""; // Clear job id for add
-  } else if (mode === "edit" && jobData) {
-    modalTitle.textContent = "Edit Job Application";
-    inputJobId.value = jobData.id;
-    inputCompany.value = jobData.company;
-    inputLocation.value = jobData.location;
-    inputTitle.value = jobData.title;
-    inputDescription.value = jobData.description;
-    inputSalary.value = jobData.salary || "";
-    inputAppliedDate.value = jobData.appliedDate;
-    inputStatus.value = jobData.status;
-    inputWorkType.value = jobData.workType || "";
+    const response = await fetch(`/api/get/${jobId}/`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+        "X-CSRFToken": csrfToken,
+      },
+    });
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        showToast("Session expired. Please login again.", false);
+        setTimeout(() => (window.location.href = "/login/"), 2000);
+      } else {
+        throw new Error(`Failed to fetch job details: ${response.status}`);
+      }
+      return null;
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching job details:", error);
+    showToast("Failed to fetch job details: " + error.message, false);
+    return null;
   }
-  modal.style.display = "flex";
 }
 
-// Close modal function
-function closeModal() {
-  modal.style.display = "none";
+// Function to update job
+async function updateJob(jobId, jobData) {
+  try {
+    const accessToken = getCookie("access_token");
+    const csrfToken = getCookie("csrftoken");
+
+    if (!accessToken) {
+      showToast("Authentication required. Please login again.", false);
+      setTimeout(() => (window.location.href = "/login/"), 2000);
+      return null;
+    }
+
+    const response = await fetch("/api/update/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+        "X-CSRFToken": csrfToken,
+      },
+      body: JSON.stringify({
+        id: jobId,
+        title: jobData.title,
+        company: jobData.company,
+        location: jobData.location,
+        description: jobData.description,
+        salary: jobData.salary ? parseInt(jobData.salary) : null,
+        applied_on: jobData.appliedDate,
+        status: jobData.status,
+        work_type: jobData.workType || null,
+      }),
+    });
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        showToast("Session expired. Please login again.", false);
+        setTimeout(() => (window.location.href = "/login/"), 2000);
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Failed to update job");
+      }
+      return null;
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error updating job:", error);
+    throw error;
+  }
 }
 
-// Render jobs list with edit buttons
-function renderJobs() {
-  jobList.innerHTML = "";
-  jobs.forEach((job) => {
-    const jobItem = document.createElement("div");
-    jobItem.className = "job-item";
-    jobItem.innerHTML = `
-      <div>
-        <strong>${job.title}</strong> at ${job.company} (${job.location})
-      </div>
-      <button class="edit-job-btn" data-id="${job.id}">Edit</button>
-    `;
-    jobList.appendChild(jobItem);
+// Function to populate form with job data
+function populateJobForm(job) {
+  document.getElementById("title").value = job.title || "";
+  document.getElementById("company").value = job.company || "";
+  document.getElementById("location").value = job.location || "";
+  document.getElementById("description").value = job.description || "";
+  document.getElementById("salary").value = job.salary || "";
+  document.getElementById("appliedDate").value = job.applied_on ? job.applied_on.split('T')[0] : "";
+  document.getElementById("status").value = job.status || "";
+  document.getElementById("workType").value = job.work_type || "";
+}
+
+// Function to clear form
+function clearJobForm() {
+  document.getElementById("jobForm").reset();
+  currentEditingJobId = null;
+  document.getElementById("modalTitle").textContent = "Add New Job";
+  document.getElementById("saveJob").textContent = "Save Job";
+}
+
+// Function to open edit modal
+async function openEditModal(jobId) {
+  try {
+    const job = await fetchJobDetails(jobId);
+    if (job) {
+      currentEditingJobId = jobId;
+      populateJobForm(job);
+      document.getElementById("modalTitle").textContent = "Edit Job";
+      document.getElementById("saveJob").textContent = "Update Job";
+      document.getElementById("jobModal").style.display = "flex";
+    }
+  } catch (error) {
+    showToast("Failed to load job details: " + error.message, false);
+  }
+}
+
+// Function to handle save/update job
+async function handleSaveJob() {
+  // Prevent double submission
+  const saveBtn = document.getElementById("saveJob");
+  const originalText = saveBtn.textContent;
+  saveBtn.disabled = true;
+  saveBtn.textContent = currentEditingJobId ? "Updating..." : "Saving...";
+
+  try {
+    // Get all form values
+    const title = document.getElementById("title").value.trim();
+    const company = document.getElementById("company").value.trim();
+    const location = document.getElementById("location").value.trim();
+    const description = document.getElementById("description").value.trim();
+    const salary = document.getElementById("salary").value;
+    const appliedDate = document.getElementById("appliedDate").value;
+    const status = document.getElementById("status").value;
+    const workType = document.getElementById("workType").value;
+
+    // Validate required fields
+    if (!title || !company || !location || !description || !appliedDate || !status) {
+      showToast("Please fill in all required fields", false);
+      return;
+    }
+
+    const jobData = {
+      title,
+      company,
+      location,
+      description,
+      salary,
+      appliedDate,
+      status,
+      workType,
+    };
+
+    let result;
+    if (currentEditingJobId) {
+      // Update existing job
+      result = await updateJob(currentEditingJobId, jobData);
+      if (result) {
+        showToast("Job updated successfully!");
+      }
+    } else {
+      // Create new job
+      result = await saveJob(jobData);
+      if (result) {
+        showToast("Job saved successfully!");
+      }
+    }
+
+    if (result) {
+      closeModal();
+      clearJobForm();
+      loadJobs(); // Reload the job list
+    }
+  } catch (error) {
+    showToast("Failed to save job: " + error.message, false);
+  } finally {
+    // Re-enable button
+    saveBtn.disabled = false;
+    saveBtn.textContent = originalText;
+  }
+}
+
+// Function to setup edit event listeners
+function setupEditEventListeners() {
+  // Add event delegation for edit buttons (since they're dynamically created)
+  document.addEventListener("click", async (e) => {
+    if (e.target.closest(".edit-job-btn")) {
+      const editBtn = e.target.closest(".edit-job-btn");
+      const jobId = editBtn.getAttribute("data-job-id");
+      if (jobId) {
+        await openEditModal(jobId);
+      }
+    }
   });
 
-  // Add click listeners for all edit buttons
-  const editButtons = document.querySelectorAll(".edit-job-btn");
-  editButtons.forEach((btn) =>
-    btn.addEventListener("click", () => {
-      const id = parseInt(btn.getAttribute("data-id"));
-      const jobToEdit = jobs.find((j) => j.id === id);
-      if (jobToEdit) openModal("edit", jobToEdit);
-    })
-  );
+  // Update the save button event listener to handle both create and update
+  const saveJobBtn = document.getElementById("saveJob");
+  if (saveJobBtn) {
+    // Remove existing event listener if any
+    saveJobBtn.removeEventListener("click", handleSaveJob);
+    // Add new event listener
+    saveJobBtn.addEventListener("click", handleSaveJob);
+  }
 }
 
-// Event Listeners
-addJobBtn.addEventListener("click", () => openModal("add"));
-closeModalBtn.addEventListener("click", closeModal);
-window.addEventListener("click", (e) => {
-  if (e.target === modal) closeModal();
+// Initialize edit functionality when DOM is loaded
+document.addEventListener("DOMContentLoaded", () => {
+  setupEditEventListeners();
 });
 
-saveJobBtn.addEventListener("click", () => {
-  // Gather data from form
-  const jobData = {
-    id: inputJobId.value ? parseInt(inputJobId.value) : Date.now(), // simple id gen
-    company: inputCompany.value.trim(),
-    location: inputLocation.value.trim(),
-    title: inputTitle.value.trim(),
-    description: inputDescription.value.trim(),
-    salary: inputSalary.value ? Number(inputSalary.value) : null,
-    appliedDate: inputAppliedDate.value,
-    status: inputStatus.value,
-    workType: inputWorkType.value,
-  };
-
-  if (
-    !jobData.company ||
-    !jobData.location ||
-    !jobData.title ||
-    !jobData.description ||
-    !jobData.appliedDate ||
-    !jobData.status
-  ) {
-    alert("Please fill in all required fields");
-    return;
-  }
-
-  if (inputJobId.value) {
-    // Edit existing job
-    const index = jobs.findIndex((j) => j.id === jobData.id);
-    if (index !== -1) {
-      jobs[index] = jobData;
-      alert("Job updated!");
-    }
-  } else {
-    // Add new job
-    jobs.push(jobData);
-    alert("Job added!");
-  }
-
-  renderJobs();
-  closeModal();
-});
-
-// Initial render
-renderJobs();
+// Export functions for use in dashboard.js if needed
+window.editJob = openEditModal;
+window.updateJob = updateJob;
+window.fetchJobDetails = fetchJobDetails;

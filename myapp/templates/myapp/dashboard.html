@@ -526,18 +526,6 @@
         height: 4px;
       }
 
-      /* New styles for edit button */
-      .edit-job-btn {
-        padding: 0.25rem 0.5rem;
-        font-size: 0.8rem;
-        border-radius: 0.6rem;
-        transition: all 0.2s;
-      }
-
-      .edit-job-btn:hover {
-        transform: scale(1.05);
-      }
-
       .chat-float-btn {
         position: fixed;
         bottom: 32px;
@@ -748,6 +736,89 @@
       </div>
     </div>
 
+    <!-- Job Modal -->
+    <div class="job-modal" id="jobModal">
+      <div class="job-modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="modalTitle">Add New Job</h3>
+          <button class="close-btn" id="closeJobModal">&times;</button>
+        </div>
+        <form id="jobForm">
+          <div class="form-group">
+            <label for="title" class="form-label required-field">Job Title</label>
+            <input type="text" class="form-control" id="title" required />
+          </div>
+          <div class="form-group">
+            <label for="company" class="form-label required-field">Company</label>
+            <input type="text" class="form-control" id="company" required />
+          </div>
+          <div class="form-group">
+            <label for="location" class="form-label required-field">Location</label>
+            <input type="text" class="form-control" id="location" required />
+          </div>
+          <div class="form-group">
+            <label for="description" class="form-label required-field">Job Description</label>
+            <textarea class="form-control" id="description" rows="4" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="salary" class="form-label">Salary (Annual)</label>
+            <input type="number" class="form-control" id="salary" placeholder="e.g., 75000" />
+          </div>
+          <div class="form-group">
+            <label for="appliedDate" class="form-label required-field">Applied Date</label>
+            <input type="date" class="form-control" id="appliedDate" required />
+          </div>
+          <div class="form-group">
+            <label for="status" class="form-label required-field">Status</label>
+            <select class="form-select" id="status" required>
+              <option value="">Select Status</option>
+              <option value="WISH_LIST">Wishlist</option>
+              <option value="APPLIED">Applied</option>
+              <option value="SHORTLISTED">Shortlisted</option>
+              <option value="INTERVIEWED">Interviewed</option>
+              <option value="OFFERED">Offered</option>
+              <option value="ACCEPTED">Accepted</option>
+              <option value="DECLINED">Declined</option>
+              <option value="REJECTED">Rejected</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="workType" class="form-label">Work Type</label>
+            <select class="form-select" id="workType">
+              <option value="">Select Work Type</option>
+              <option value="FULL_TIME">Full Time</option>
+              <option value="PART_TIME">Part Time</option>
+              <option value="CONTRACT">Contract</option>
+              <option value="INTERNSHIP">Internship</option>
+              <option value="REMOTE">Remote</option>
+            </select>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-secondary" id="cancelJob">Cancel</button>
+            <button type="button" class="btn-primary" id="saveJob">Save Job</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container">
+      <div class="toast" id="successToast" role="alert">
+        <div class="toast-header">
+          <strong class="me-auto">Success</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body" id="toastMessage"></div>
+      </div>
+      <div class="toast" id="errorToast" role="alert">
+        <div class="toast-header">
+          <strong class="me-auto">Error</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body" id="errorToastMessage"></div>
+      </div>
+    </div>
+
     <!-- Logout Confirmation Modal -->
     <div class="logout-modal" id="logoutModal">
       <div class="logout-confirmation">
@@ -760,202 +831,6 @@
           <button class="btn btn-secondary" id="cancelLogout">Cancel</button>
           <button class="btn btn-danger" id="confirmLogout">Log Out</button>
         </div>
-      </div>
-    </div>
-
-    <!-- Add/Edit Job Modal -->
-    <input type="hidden" id="jobId" value="" />
-    <div class="job-modal" id="jobModal">
-      <div class="job-modal-content">
-        <div class="modal-header">
-          <h3 class="modal-title">Add New Job Application</h3>
-          <button class="close-btn" id="closeJobModal">&times;</button>
-        </div>
-        <form id="jobForm">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="company" class="form-label required-field"
-                  >Company</label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="company"
-                  placeholder="Enter company name"
-                  required
-                />
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="location" class="form-label required-field"
-                  >Location</label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="location"
-                  placeholder="Enter location"
-                  required
-                />
-              </div>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="title" class="form-label required-field"
-              >Job Title</label
-            >
-            <input
-              type="text"
-              class="form-control"
-              id="title"
-              placeholder="Enter job title"
-              required
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="description" class="form-label required-field"
-              >Job Description</label
-            >
-            <textarea
-              class="form-control"
-              id="description"
-              rows="4"
-              placeholder="Enter job description"
-              required
-            ></textarea>
-          </div>
-
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="salary" class="form-label">Salary (optional)</label>
-                <input
-                  type="number"
-                  class="form-control"
-                  id="salary"
-                  placeholder="Enter annual salary"
-                />
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="appliedDate" class="form-label required-field"
-                  >Applied Date</label
-                >
-                <input
-                  type="date"
-                  class="form-control"
-                  id="appliedDate"
-                  required
-                />
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="status" class="form-label required-field"
-                  >Status</label
-                >
-                <select class="form-select" id="status" required>
-                  <option value="">Select status</option>
-                  <option value="WISH_LIST">Wish List</option>
-                  <option value="APPLIED">Applied</option>
-                  <option value="SHORTLISTED">Shortlisted</option>
-                  <option value="REJECTED">Rejected</option>
-                  <option value="INTERVIEWED">Interviewed</option>
-                  <option value="OFFERED">Offered</option>
-                  <option value="ACCEPTED">Accepted</option>
-                  <option value="DECLINED">Declined</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="workType" class="form-label"
-                  >Work Type (optional)</label
-                >
-                <select class="form-select" id="workType">
-                  <option value="">Select work type</option>
-                  <option value="FULL_TIME">Full-time</option>
-                  <option value="PART_TIME">Part-time</option>
-                  <option value="CONTRACT">Contract</option>
-                  <option value="FREELANCE">Freelance</option>
-                  <option value="INTERNSHIP">Internship</option>
-                  <option value="REMOTE">Remote</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" id="cancelJob">
-              Cancel
-            </button>
-            <button type="button" class="btn btn-primary" id="saveJob">
-              Save Application
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- Toast Container for Notifications -->
-    <div class="toast-container">
-      <div
-        class="toast align-items-center text-white bg-success border-0"
-        id="successToast"
-        role="alert"
-        aria-live="assertive"
-        aria-atomic="true"
-      >
-        <div class="d-flex">
-          <div class="toast-body">
-            <i class="bi bi-check-circle me-2"></i>
-            <span id="toastMessage">Operation successful!</span>
-          </div>
-          <button
-            type="button"
-            class="btn-close btn-close-white me-2 m-auto"
-            data-bs-dismiss="toast"
-            aria-label="Close"
-          ></button>
-        </div>
-        <div
-          class="progress-bar bg-success"
-          role="progressbar"
-          style="width: 100%"
-        ></div>
-      </div>
-      <div
-        class="toast align-items-center text-white bg-danger border-0"
-        id="errorToast"
-        role="alert"
-        aria-live="assertive"
-        aria-atomic="true"
-      >
-        <div class="d-flex">
-          <div class="toast-body">
-            <i class="bi bi-exclamation-triangle me-2"></i>
-            <span id="errorToastMessage">Error occurred!</span>
-          </div>
-          <button
-            type="button"
-            class="btn-close btn-close-white me-2 m-auto"
-            data-bs-dismiss="toast"
-            aria-label="Close"
-          ></button>
-        </div>
-        <div
-          class="progress-bar bg-danger"
-          role="progressbar"
-          style="width: 100%"
-        ></div>
       </div>
     </div>
 
