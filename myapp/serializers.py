@@ -7,7 +7,6 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'email']
-
 class UserProfileSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(source='user.id')
     username = serializers.CharField(source='user.username')
@@ -26,7 +25,7 @@ class JobSerializer(serializers.ModelSerializer):
         
 class ContactSerializer(serializers.ModelSerializer):
     class Meta:
-        model=ContactMessage
+        model=ContactMessage  # Missing space around =
         fields = ['id', 'name', 'email', 'message', 'created_at']
-        read_only_fields=['id','created_at']
+        read_only_fields=['id','created_at']  # Missing spaces
     
